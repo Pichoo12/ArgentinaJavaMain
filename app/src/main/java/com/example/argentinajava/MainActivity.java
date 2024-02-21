@@ -1,67 +1,88 @@
 package com.example.argentinajava;
 
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-
     private TextView timerTextView;
     private Button startStopButton;
-    private boolean isTimerRunning = false;
-    private int seconds = 0;
-    private Handler handler = new Handler();
+    private CountDownTimer countDownTimer;
+    private boolean timerRunning = false;
+    private long timeLeftInMillis = 300000;
 
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            seconds++;
-            int hours = seconds / 3600;
-            int minutes = (seconds % 3600) / 60;
-            int secs = seconds % 60;
-
-            String time = String.format("%02d:%02d:%02d", hours, minutes, secs);
-            timerTextView.setText(time);
-
-            if (isTimerRunning) {
-                handler.postDelayed(this, 1000);
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         timerTextView = findViewById(R.id.timerTextView);
         startStopButton = findViewById(R.id.startStopButton);
+
 
         startStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isTimerRunning) {
+                if (timerRunning) {
                     stopTimer();
                 } else {
                     startTimer();
                 }
             }
         });
+
+
+        updateTimerText();
     }
+
 
     private void startTimer() {
-        isTimerRunning = true;
-        startStopButton.setText("Stop");
-        handler.post(runnable);
+        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
+                updateTimerText();
+            }
+
+
+            @Override
+            public void onFinish() {
+                timerRunning = false;
+                startStopButton.setText("Start");
+                timeLeftInMillis = 60000; // Reset to 1 minute
+                updateTimerText();
+            }
+        }.start();
+
+
+        timerRunning = true;
+        startStopButton.setText("Pause");
     }
 
+
     private void stopTimer() {
-        isTimerRunning = false;
+        countDownTimer.cancel();
+        timerRunning = false;
         startStopButton.setText("Start");
-        handler.removeCallbacks(runnable);
+    }
+    private void updateTimerText() {
+        int minutes = (int) (timeLeftInMillis / 1000) / 60;
+        int seconds = (int) (timeLeftInMillis / 1000) % 60;
+
+
+        String timeFormatted = String.format("%02d:%02d", minutes, seconds);
+        timerTextView.setText(timeFormatted);
     }
 }
+
+
+
+
+
