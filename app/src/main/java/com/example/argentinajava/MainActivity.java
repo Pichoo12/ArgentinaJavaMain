@@ -64,13 +64,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 increaseTime();
             }
-
         });
         updateTimerText();
     }
-
-
-
     private void startTimer() {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
@@ -78,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 timeLeftInMillis = millisUntilFinished;
                 updateTimerText();
             }
-
             @Override
             public void onFinish() {
                 Running = false;
@@ -90,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         Running = true;
         startStopButton.setText("Paused");
     }
-
     private void stopTimer() {
         countDownTimer.cancel();
         Running = false;
@@ -113,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void increaseTime() {
-        timeLeftInMillis += 60000; // Increase time by 1 minute (60000 milliseconds)
+        timeLeftInMillis += 60000;
         updateTimerText();
     }
 
