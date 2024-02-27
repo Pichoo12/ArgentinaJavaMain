@@ -1,19 +1,22 @@
 package com.example.argentinajava;
-
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 public class MainActivity extends AppCompatActivity {
     private TextView timerTextView;
     private Button startStopButton;
+    private Button nextscreenButton;
     private Button clearButton;
+    private Button decreaseButton;
+    private Button increaseButton;
     private CountDownTimer countDownTimer;
     private boolean Running = false;
-    private long timeLeftInMillis = 600000;
+    private long timeLeftInMillis = 600000; // 10 minutes
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
         timerTextView = findViewById(R.id.timerTextView);
         startStopButton = findViewById(R.id.startStopButton);
         clearButton = findViewById(R.id.clearButton);
+        decreaseButton = findViewById(R.id.decreaseButton);
+        increaseButton = findViewById(R.id.increaseButton);
+        nextscreenButton = findViewById(R.id.nextscreen);
 
         startStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,16 +40,36 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resetTimer();
             }
         });
+        nextscreenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Intent intent = new Intent(MainActivity.this,Calendar.class);
+               startActivity(intent);
+            }
+        });
+        decreaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                decreaseTime();
+            }
+        });
+        increaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                increaseTime();
+            }
 
+        });
         updateTimerText();
     }
+
+
 
     private void startTimer() {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
@@ -57,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
                 Running = false;
                 startStopButton.setText("Start");
-                timeLeftInMillis = 60000; // Reset to 1 minute
+                timeLeftInMillis = 60000;
                 updateTimerText();
             }
         }.start();
@@ -72,8 +98,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void resetTimer() {
-        stopTimer(); // Stop the timer if running
-        timeLeftInMillis = 600000; // Reset timer to 5 minutes
+        stopTimer();
+        //10 minutes
+        timeLeftInMillis = 600000;
+        updateTimerText();
+    }
+//incease and decrease buttons
+    private void decreaseTime() {
+        timeLeftInMillis -= 60000;
+        if (timeLeftInMillis < 0) {
+            timeLeftInMillis = 0;
+        }
+        updateTimerText();
+    }
+
+    private void increaseTime() {
+        timeLeftInMillis += 60000; // Increase time by 1 minute (60000 milliseconds)
         updateTimerText();
     }
 
